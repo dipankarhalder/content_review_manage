@@ -7,6 +7,10 @@ const paths = {
   signup: '/auth/signup',
   signin: '/auth/signin',
   signout: '/auth/signout',
+
+  /* profile */
+  profiledetails: '/profile/me',
+  updatepassword: '/profile/update-admin-password',
 };
 
 module.exports = {
