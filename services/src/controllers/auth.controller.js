@@ -5,19 +5,30 @@ const { msg } = require('../constant');
 const { auth } = require('../validation');
 const { comutils } = require('../utils');
 
-/* user signup */
+/*
+ * @ API - User Register
+ * @ method - POST
+ * @ end point - http://localhost:4001/api/v1/auth/signup
+ */
 const userSignup = async (req, res) => {
   try {
+    /* validate request body */
     const { error, value } = auth.userInfoSchema.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
       return comutils.validateFields(res, error.details.map((detail) => detail.message).join(', '));
     }
-    const existingEmail = await User.findOne({ email: value.email });
+
+    /* find the existing user via email */
+    const existingEmail = await User.findOne({
+      email: value.email,
+    });
     if (existingEmail) {
       return comutils.validateFields(res, msg.user.emailAlreadyExist);
     }
+
+    /* new user */
     const user = new User({
       firstName: value.firstName,
       lastName: value.lastName,
@@ -26,7 +37,10 @@ const userSignup = async (req, res) => {
       phone: value.phone,
       role: value.role,
     });
+
+    /* save the user */
     await user.save();
+
     return res.status(StatusCodes.OK).json({
       status: StatusCodes.OK,
       message: msg.user.newUserCreated,
@@ -36,29 +50,43 @@ const userSignup = async (req, res) => {
   }
 };
 
-/* user signin */
+/*
+ * @ API - User Login
+ * @ method - POST
+ * @ end point - http://localhost:4001/api/v1/auth/signin
+ */
 const userSignin = async (req, res) => {
   try {
+    /* validate request body */
     const { error, value } = auth.userLoginSchema.validate(req.body, {
       abortEarly: false,
     });
     if (error) {
       return comutils.validateFields(res, error.details.map((detail) => detail.message).join(', '));
     }
-    const user = await User.findOne({ email: value.email });
+
+    /* find the existing user via email */
+    const user = await User.findOne({
+      email: value.email,
+    });
     if (!user) {
       return comutils.validateFields(res, msg.user.existUserEmail);
     }
+
+    /* validate / compare the password */
     const isMatch = await user.comparePassword(value.password);
     if (!isMatch) {
       return comutils.validateFields(res, msg.user.userWrongPassword);
     }
+
+    /* generated token */
     const token = user.generateAuthToken();
     res.cookie('token', token, {
       httpOnly: true,
       secure: env.NODEENV,
       maxAge: env.EXPTIME,
     });
+
     return res.status(StatusCodes.OK).json({
       status: StatusCodes.OK,
       token: token,
@@ -69,14 +97,20 @@ const userSignin = async (req, res) => {
   }
 };
 
-/* user signin */
+/*
+ * @ API - User Logout
+ * @ method - POST
+ * @ end point - http://localhost:4001/api/v1/auth/sign-out
+ */
 const userSignout = async (req, res) => {
   try {
+    /* signout and clear cookie */
     res.clearCookie('token', {
       httpOnly: true,
       secure: env.NODEENV,
       sameSite: 'Strict',
     });
+
     return res.status(StatusCodes.OK).json({
       status: StatusCodes.OK,
       message: msg.user.userLogoutSuccessfully,

@@ -4,9 +4,14 @@ const { msg } = require('../constant');
 const { auth } = require('../validation');
 const { comutils } = require('../utils');
 
-/* user profile */
+/*
+ * @ API - Logged-in User Details
+ * @ method - GET
+ * @ end point - http://localhost:4001/api/v1/profile/me
+ */
 const getProfile = async (req, res) => {
   try {
+    /* find user by id */
     const decoded = req.user;
     const user = await User.findById(decoded.id).select('-password');
     if (!user) {
@@ -21,6 +26,11 @@ const getProfile = async (req, res) => {
   }
 };
 
+/*
+ * @ API - Update Admin Password
+ * @ method - PATCH
+ * @ end point - http://localhost:4001/api/v1/profile/update-admin-password
+ */
 const updateAdminPassword = async (req, res) => {
   try {
     const decoded = req.user;
