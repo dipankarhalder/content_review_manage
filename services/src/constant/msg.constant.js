@@ -42,8 +42,22 @@ const user = {
   expireUserToken: 'The token is expired or invalid.',
 };
 
+const tax = {
+  requireTaxName: 'Tax name should not be blank.',
+  maximumTaxName: 'Maximum 60 characters allow for tax name',
+  requireTaxCode: 'Tax code should not be blank.',
+  maximumTaxCode: 'Maximum 30 characters allow for tax code',
+  requireTaxTpye: 'Tax type should not be blank.',
+  requireTaxStatus: 'Tax status should not be blank.',
+  requireTaxPercent: 'Tax percentage should not be blank.',
+  taxAlreadyExist: 'Provided tax is already associated with another item.',
+  maximumDesc: 'Maximum 255 characters allow for description',
+  newTaxCreated: 'New tax item created successfully.',
+};
+
 module.exports = {
   db,
   server,
   user,
+  tax,
 };
