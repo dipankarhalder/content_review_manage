@@ -11,6 +11,11 @@ const paths = {
   /* profile */
   profiledetails: '/profile/me',
   updatepassword: '/profile/update-admin-password',
+
+  /* taxes */
+  newTax: '/tax/new',
+  listTaxs: '/tax/list',
+  taxItem: '/tax/:id',
 };
 
 module.exports = {
